@@ -16,6 +16,12 @@
 		BC2768AF22170F7C00F5C40C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BC2768AE22170F7C00F5C40C /* Assets.xcassets */; };
 		BC2768B222170F7C00F5C40C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BC2768B022170F7C00F5C40C /* LaunchScreen.storyboard */; };
 		BC2768B522170F7C00F5C40C /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = BC2768B422170F7C00F5C40C /* main.m */; };
+		BC324F97221B04AD008E78C0 /* basketballsideview.jpg in Resources */ = {isa = PBXBuildFile; fileRef = BC324F93221B04AD008E78C0 /* basketballsideview.jpg */; };
+		BC324F98221B04AD008E78C0 /* basketball.jpeg in Resources */ = {isa = PBXBuildFile; fileRef = BC324F94221B04AD008E78C0 /* basketball.jpeg */; };
+		BC324F99221B04AD008E78C0 /* IntroPicBasketball2.jpg in Resources */ = {isa = PBXBuildFile; fileRef = BC324F95221B04AD008E78C0 /* IntroPicBasketball2.jpg */; };
+		BC324F9A221B04AD008E78C0 /* IntroPicBasketball.jpeg in Resources */ = {isa = PBXBuildFile; fileRef = BC324F96221B04AD008E78C0 /* IntroPicBasketball.jpeg */; };
+		BC324F9E221B060E008E78C0 /* Screen Shot 2019-02-18 at 10.25.46 AM.png in Resources */ = {isa = PBXBuildFile; fileRef = BC324F9D221B060E008E78C0 /* Screen Shot 2019-02-18 at 10.25.46 AM.png */; };
+		BC324FA0221B0805008E78C0 /* basketball1.png in Resources */ = {isa = PBXBuildFile; fileRef = BC324F9F221B0805008E78C0 /* basketball1.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -33,6 +39,12 @@
 		BC2768B122170F7C00F5C40C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		BC2768B322170F7C00F5C40C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BC2768B422170F7C00F5C40C /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		BC324F93221B04AD008E78C0 /* basketballsideview.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = basketballsideview.jpg; sourceTree = "<group>"; };
+		BC324F94221B04AD008E78C0 /* basketball.jpeg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = basketball.jpeg; sourceTree = "<group>"; };
+		BC324F95221B04AD008E78C0 /* IntroPicBasketball2.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = IntroPicBasketball2.jpg; sourceTree = "<group>"; };
+		BC324F96221B04AD008E78C0 /* IntroPicBasketball.jpeg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = IntroPicBasketball.jpeg; sourceTree = "<group>"; };
+		BC324F9D221B060E008E78C0 /* Screen Shot 2019-02-18 at 10.25.46 AM.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Screen Shot 2019-02-18 at 10.25.46 AM.png"; sourceTree = "<group>"; };
+		BC324F9F221B0805008E78C0 /* basketball1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = basketball1.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -65,6 +77,12 @@
 		BC27689D22170F7900F5C40C /* AnimationGame */ = {
 			isa = PBXGroup;
 			children = (
+				BC324F9F221B0805008E78C0 /* basketball1.png */,
+				BC324F9D221B060E008E78C0 /* Screen Shot 2019-02-18 at 10.25.46 AM.png */,
+				BC324F94221B04AD008E78C0 /* basketball.jpeg */,
+				BC324F93221B04AD008E78C0 /* basketballsideview.jpg */,
+				BC324F96221B04AD008E78C0 /* IntroPicBasketball.jpeg */,
+				BC324F95221B04AD008E78C0 /* IntroPicBasketball2.jpg */,
 				BC27689E22170F7900F5C40C /* AppDelegate.h */,
 				BC27689F22170F7900F5C40C /* AppDelegate.m */,
 				BC2768A122170F7900F5C40C /* GameScene.sks */,
@@ -143,7 +161,13 @@
 				BC2768A222170F7900F5C40C /* GameScene.sks in Resources */,
 				BC2768AF22170F7C00F5C40C /* Assets.xcassets in Resources */,
 				BC2768B222170F7C00F5C40C /* LaunchScreen.storyboard in Resources */,
+				BC324F9E221B060E008E78C0 /* Screen Shot 2019-02-18 at 10.25.46 AM.png in Resources */,
+				BC324FA0221B0805008E78C0 /* basketball1.png in Resources */,
+				BC324F98221B04AD008E78C0 /* basketball.jpeg in Resources */,
+				BC324F99221B04AD008E78C0 /* IntroPicBasketball2.jpg in Resources */,
+				BC324F97221B04AD008E78C0 /* basketballsideview.jpg in Resources */,
 				BC2768A422170F7900F5C40C /* Actions.sks in Resources */,
+				BC324F9A221B04AD008E78C0 /* IntroPicBasketball.jpeg in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
