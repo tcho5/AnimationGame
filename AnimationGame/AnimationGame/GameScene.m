@@ -13,7 +13,11 @@
     SKLabelNode *_label;
     SKSpriteNode *_ball;
     SKColor * _backgroundColor;
+    SKTexture* _blockerTexture1;
+    SKTexture* _blockerTexture2;
+    SKAction* _moveAndRemoveBlocks;
 }
+static NSInteger const kVerticalBlockerGap = 300;
 
 - (void)didMoveToView:(SKView *)view {
    // self.view.backgroundColor = [UIColor blackColor];
@@ -34,7 +38,7 @@
     _ball.physicsBody.allowsRotation = NO;
     
     [self addChild:_ball];
-    
+
     SKNode* dummy = [SKNode node];
     dummy.position = CGPointMake(0, -800);
     dummy.physicsBody = [SKPhysicsBody bodyWithRectangleOfSize:CGSizeMake(self.frame.size.width,  200)];
@@ -46,58 +50,80 @@
     dummy2.physicsBody = [SKPhysicsBody bodyWithRectangleOfSize:CGSizeMake(self.frame.size.width,  200)];
     dummy2.physicsBody.dynamic = NO;
     [self addChild:dummy2];
+    
 
+    SKAction* spawn = [SKAction performSelector:@selector(spawnBlockers) onTarget:self];
+    SKAction* delay = [SKAction waitForDuration:3.0];
+    SKAction* spawnThenDelay = [SKAction sequence:@[spawn, delay]];
+    SKAction* spawnThenDelayForever = [SKAction repeatActionForever:spawnThenDelay];
+    [self runAction:spawnThenDelayForever];
     
-//    SKTexture* groundTexture = [SKTexture textureWithImageNamed:@"intense_background"];
-//    groundTexture.filteringMode = SKTextureFilteringNearest;
+    
+    //[_label runAction:[SKAction actionNamed:@"Pulse"] withKey:@"fadeInOut"];
 //
-//    SKAction* moveGroundSprite = [SKAction moveByX:-groundTexture.size.width*2 y:0 duration:0.02 * groundTexture.size.width*2];
-//    SKAction* resetGroundSprite = [SKAction moveByX:groundTexture.size.width*2 y:0 duration:0];
-//    SKAction* moveGroundSpritesForever = [SKAction repeatActionForever:[SKAction sequence:@[moveGroundSprite, resetGroundSprite]]];
+//    CGFloat distanceToMove = self.frame.size.width + 3 * _blockerTexture1.size.width;
+//    moveBlockers = [SKAction moveByX:-distanceToMove y:0 duration:0.01 * distanceToMove];
+//    SKAction* removeBlockers = [SKAction removeFromParent];
+//    _moveAndRemoveBlocks = [SKAction sequence:@[moveBlockers, removeBlockers]];
 //
-//    for( int i = 0; i < 2 + self.frame.size.width / ( groundTexture.size.width * 2 ); ++i ) {
-//        // Create the sprite
-//        SKSpriteNode* sprite = [SKSpriteNode spriteNodeWithTexture:groundTexture];
-//        [sprite setScale:2.0];
-//        sprite.position = CGPointMake(i * sprite.size.width, sprite.size.height / 2);
-//        [sprite runAction:moveGroundSpritesForever];
-//        [self addChild:sprite];
-//    }
+//    //[_label runAction:[SKAction fadeInWithDuration:2.0]];
 //
+//    SKAction* spawn = [SKAction performSelector:@selector(spawnBlockers) onTarget:self];
+//    SKAction* delay = [SKAction waitForDuration:1.0];
+//    SKAction* spawnThenDelay = [SKAction sequence:@[spawn, delay]];
+//    SKAction* spawnThenDelayForever = [SKAction repeatActionForever:spawnThenDelay];
+//    [self runAction:spawnThenDelayForever];
+//
+//    // Get label node from scene and store it for use later
+//    _label.alpha = 0.0;
+//
+//    CGFloat w = (self.size.width + self.size.height) * 0.05;
+//
+//    // Create shape node to use during mouse interaction
+//    _spinnyNode = [SKShapeNode shapeNodeWithRectOfSize:CGSizeMake(w, w) cornerRadius:w * 0.3];
+//    _spinnyNode.lineWidth = 2.5;
+//
+//    [_spinnyNode runAction:[SKAction repeatActionForever:[SKAction rotateByAngle:M_PI duration:1]]];
+//    [_spinnyNode runAction:[SKAction sequence:@[
+//                                                [SKAction waitForDuration:0.5],
+//                                                [SKAction fadeOutWithDuration:0.5],
+//                                                [SKAction removeFromParent],
+//                                                ]]];
+}
+-(void)spawnBlockers {
+    SKTexture* _blockerTexture1 = [SKTexture textureWithImageNamed:@"GiannisBlock"];
+    _blockerTexture1.filteringMode = SKTextureFilteringNearest;
+    SKTexture* _blockerTexture2 = [SKTexture textureWithImageNamed:@"giannis3"];
+    _blockerTexture2.filteringMode = SKTextureFilteringNearest;
     
-//    SKNode* dummy = [SKNode node];
-//    dummy.position = CGPointMake(0, groundTexture.size.height);
-//    dummy.physicsBody = [SKPhysicsBody bodyWithRectangleOfSize:CGSizeMake(self.frame.size.width, groundTexture.size.height * 2)];
-//    dummy.physicsBody.dynamic = NO;
-//    [self addChild:dummy];
+    SKNode* blockerPair = [SKNode node];
+    blockerPair.position = CGPointMake(450,-500);// self.frame.size.width + _blockerTexture1.size.width * 2, 0 );
+    blockerPair.zPosition = -10;
     
-//    SKTexture* background = [SKTexture textureWithImageNamed:@"intense_background"];
-//    background.filteringMode = SKTextureFilteringNearest;
-//    for( int i = 0; i < 2 + self.frame.size.width / ( background.size.width * 2 ); ++i ) {
-//        SKSpriteNode* sprite = [SKSpriteNode spriteNodeWithTexture:background];
-//        [sprite setScale:2.0];
-//        sprite.position = CGPointMake(i * sprite.size.width, sprite.size.height / 2);
-//        [self addChild:sprite];
-//    }
+    CGFloat y = arc4random() % (NSInteger)( self.frame.size.height / 10 );
     
-    // Get label node from scene and store it for use later
-    _label = (SKLabelNode *)[self childNodeWithName:@"//helloLabel"];
+    SKSpriteNode* blocker1 = [SKSpriteNode spriteNodeWithTexture:_blockerTexture1];
+    [blocker1 setScale:1];
+    blocker1.position = CGPointMake( 0, y );
+    blocker1.physicsBody = [SKPhysicsBody bodyWithRectangleOfSize:blocker1.size];
+    blocker1.physicsBody.dynamic = NO;
+    [blockerPair addChild:blocker1];
     
-    _label.alpha = 0.0;
-    [_label runAction:[SKAction fadeInWithDuration:2.0]];
     
-    CGFloat w = (self.size.width + self.size.height) * 0.05;
+    SKSpriteNode* blocker2 = [SKSpriteNode spriteNodeWithTexture:_blockerTexture2];
+    [blocker2 setScale:2.2];
+    blocker2.position = CGPointMake( 0, y + blocker1.size.height + kVerticalBlockerGap );
+    blocker2.physicsBody = [SKPhysicsBody bodyWithRectangleOfSize:blocker2.size];
+    blocker2.physicsBody.dynamic = NO;
+    [blockerPair addChild:blocker2];
     
-    // Create shape node to use during mouse interaction
-    _spinnyNode = [SKShapeNode shapeNodeWithRectOfSize:CGSizeMake(w, w) cornerRadius:w * 0.3];
-    _spinnyNode.lineWidth = 2.5;
+    //Change speed of blocker
     
-    [_spinnyNode runAction:[SKAction repeatActionForever:[SKAction rotateByAngle:M_PI duration:1]]];
-    [_spinnyNode runAction:[SKAction sequence:@[
-                                                [SKAction waitForDuration:0.5],
-                                                [SKAction fadeOutWithDuration:0.5],
-                                                [SKAction removeFromParent],
-                                                ]]];
+    SKAction* moveBlockers = [SKAction repeatActionForever:[SKAction moveByX:-4 y:0 duration:0.02]];
+    
+    [blockerPair runAction:moveBlockers];
+    
+    [self addChild:blockerPair];
 }
 
 
@@ -124,7 +150,7 @@
 -(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
     /* Called when a touch begins */
     _ball.physicsBody.velocity = CGVectorMake(0, 0);
-    [_ball.physicsBody applyImpulse:CGVectorMake(0, 400)];
+    [_ball.physicsBody applyImpulse:CGVectorMake(0, 175)];
     //[_label runAction:[SKAction actionNamed:@"Pulse"] withKey:@"fadeInOut"];
 
 //- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
@@ -144,8 +170,18 @@
     for (UITouch *t in touches) {[self touchUpAtPoint:[t locationInNode:self]];}
 }
 
-
+CGFloat clamp(CGFloat min, CGFloat max, CGFloat value) {
+    if( value > max ) {
+        return max;
+    } else if( value < min ) {
+        return min;
+    } else {
+        return value;
+    }
+}
 -(void)update:(CFTimeInterval)currentTime {
+    _ball.zRotation = clamp( -1, 1, _ball.physicsBody.velocity.dy * ( _ball.physicsBody.velocity.dy < 0 ? 0.003 : 0.001 ) );
+
     // Called before each frame is rendered
 }
 
