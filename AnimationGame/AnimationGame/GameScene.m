@@ -16,16 +16,25 @@
     SKTexture* _blockerTexture1;
     SKTexture* _blockerTexture2;
     SKAction* _moveAndRemoveBlocks;
+    SKNode* _moving;
+
 }
 static NSInteger const kVerticalBlockerGap = 300;
+static const uint32_t ballCategory = 1 << 0;
+static const uint32_t worldCategory = 1 << 1;
+static const uint32_t blockerCategory = 1 << 2;
 
 - (void)didMoveToView:(SKView *)view {
+    self.backgroundColor = UIColor.lightTextColor;
    // self.view.backgroundColor = [UIColor blackColor];
     // Setup your scene here
     
     //_backgroundColor = [SKColor SK_ColorBLACK = SkColorSetARGB(0xFF, 0x00, 0x00, 0x00)];
     //[self setBackgroundColor:_backgroundColor];
     self.physicsWorld.gravity = CGVectorMake( 0.0, -5.0 );
+    self.physicsWorld.contactDelegate = self;
+    
+    
     
     SKTexture* ballTexture = [SKTexture textureWithImageNamed:@"basketball1"];
     ballTexture.filteringMode = SKTextureFilteringNearest;
@@ -36,13 +45,18 @@ static NSInteger const kVerticalBlockerGap = 300;
     _ball.physicsBody = [SKPhysicsBody bodyWithCircleOfRadius:_ball.size.height / 2];
     _ball.physicsBody.dynamic = YES;
     _ball.physicsBody.allowsRotation = NO;
-    
+    _ball.physicsBody.categoryBitMask = ballCategory;
+    _ball.physicsBody.collisionBitMask = worldCategory | blockerCategory;
+    _ball.physicsBody.contactTestBitMask = worldCategory | blockerCategory;
+    _moving = [SKNode node];
+    [self addChild:_moving];
     [self addChild:_ball];
 
     SKNode* dummy = [SKNode node];
     dummy.position = CGPointMake(0, -800);
     dummy.physicsBody = [SKPhysicsBody bodyWithRectangleOfSize:CGSizeMake(self.frame.size.width,  200)];
     dummy.physicsBody.dynamic = NO;
+    dummy.physicsBody.categoryBitMask = worldCategory;
     [self addChild:dummy];
     
     SKNode* dummy2 = [SKNode node];
@@ -51,7 +65,20 @@ static NSInteger const kVerticalBlockerGap = 300;
     dummy2.physicsBody.dynamic = NO;
     [self addChild:dummy2];
     
-
+//    SKTexture* groundTexture = [SKTexture textureWithImageNamed:@"IntroPicBasketball"];
+//    groundTexture.filteringMode = SKTextureFilteringNearest;
+//    SKAction* moveGroundSprite = [SKAction moveByX:-groundTexture.size.width*2 y:0 duration:0.02 * groundTexture.size.width*2];
+//    SKAction* resetGroundSprite = [SKAction moveByX:groundTexture.size.width*2 y:0 duration:0];
+//    SKAction* moveGroundSpritesForever = [SKAction repeatActionForever:[SKAction sequence:@[moveGroundSprite, resetGroundSprite]]];
+//
+//    for( int i = 0; i < 2 + self.frame.size.width / ( groundTexture.size.width * 2 ); ++i ) {
+//        SKSpriteNode* sprite = [SKSpriteNode spriteNodeWithTexture:groundTexture];
+//        [sprite setScale:2.0];
+//        sprite.position = CGPointMake(i * sprite.size.width, -400);
+//        [sprite runAction:moveGroundSpritesForever];
+//        [self addChild:sprite];
+//    }
+    
     SKAction* spawn = [SKAction performSelector:@selector(spawnBlockers) onTarget:self];
     SKAction* delay = [SKAction waitForDuration:3.0];
     SKAction* spawnThenDelay = [SKAction sequence:@[spawn, delay]];
@@ -59,36 +86,8 @@ static NSInteger const kVerticalBlockerGap = 300;
     [self runAction:spawnThenDelayForever];
     
     
-    //[_label runAction:[SKAction actionNamed:@"Pulse"] withKey:@"fadeInOut"];
-//
-//    CGFloat distanceToMove = self.frame.size.width + 3 * _blockerTexture1.size.width;
-//    moveBlockers = [SKAction moveByX:-distanceToMove y:0 duration:0.01 * distanceToMove];
-//    SKAction* removeBlockers = [SKAction removeFromParent];
-//    _moveAndRemoveBlocks = [SKAction sequence:@[moveBlockers, removeBlockers]];
-//
-//    //[_label runAction:[SKAction fadeInWithDuration:2.0]];
-//
-//    SKAction* spawn = [SKAction performSelector:@selector(spawnBlockers) onTarget:self];
-//    SKAction* delay = [SKAction waitForDuration:1.0];
-//    SKAction* spawnThenDelay = [SKAction sequence:@[spawn, delay]];
-//    SKAction* spawnThenDelayForever = [SKAction repeatActionForever:spawnThenDelay];
-//    [self runAction:spawnThenDelayForever];
-//
-//    // Get label node from scene and store it for use later
-//    _label.alpha = 0.0;
-//
-//    CGFloat w = (self.size.width + self.size.height) * 0.05;
-//
-//    // Create shape node to use during mouse interaction
-//    _spinnyNode = [SKShapeNode shapeNodeWithRectOfSize:CGSizeMake(w, w) cornerRadius:w * 0.3];
-//    _spinnyNode.lineWidth = 2.5;
-//
-//    [_spinnyNode runAction:[SKAction repeatActionForever:[SKAction rotateByAngle:M_PI duration:1]]];
-//    [_spinnyNode runAction:[SKAction sequence:@[
-//                                                [SKAction waitForDuration:0.5],
-//                                                [SKAction fadeOutWithDuration:0.5],
-//                                                [SKAction removeFromParent],
-//                                                ]]];
+    
+    
 }
 -(void)spawnBlockers {
     SKTexture* _blockerTexture1 = [SKTexture textureWithImageNamed:@"GiannisBlock"];
@@ -100,13 +99,15 @@ static NSInteger const kVerticalBlockerGap = 300;
     blockerPair.position = CGPointMake(450,-500);// self.frame.size.width + _blockerTexture1.size.width * 2, 0 );
     blockerPair.zPosition = -10;
     
-    CGFloat y = arc4random() % (NSInteger)( self.frame.size.height / 10 );
+    CGFloat y = arc4random() % (NSInteger)(500);
     
     SKSpriteNode* blocker1 = [SKSpriteNode spriteNodeWithTexture:_blockerTexture1];
     [blocker1 setScale:1];
     blocker1.position = CGPointMake( 0, y );
     blocker1.physicsBody = [SKPhysicsBody bodyWithRectangleOfSize:blocker1.size];
     blocker1.physicsBody.dynamic = NO;
+    blocker1.physicsBody.categoryBitMask = blockerCategory;
+    blocker1.physicsBody.contactTestBitMask = ballCategory;
     [blockerPair addChild:blocker1];
     
     
@@ -115,17 +116,25 @@ static NSInteger const kVerticalBlockerGap = 300;
     blocker2.position = CGPointMake( 0, y + blocker1.size.height + kVerticalBlockerGap );
     blocker2.physicsBody = [SKPhysicsBody bodyWithRectangleOfSize:blocker2.size];
     blocker2.physicsBody.dynamic = NO;
+    blocker2.physicsBody.categoryBitMask = blockerCategory;
+    blocker2.physicsBody.contactTestBitMask = ballCategory;
     [blockerPair addChild:blocker2];
     
     //Change speed of blocker
-    
     SKAction* moveBlockers = [SKAction repeatActionForever:[SKAction moveByX:-4 y:0 duration:0.02]];
     
     [blockerPair runAction:moveBlockers];
-    
     [self addChild:blockerPair];
-}
 
+}
+- (void)didBeginContact:(SKPhysicsContact *)contact {
+    if( _moving.speed > 0 ) {
+        _moving.speed = 0;
+        
+        // Flash background if contact is detected
+    
+    }
+}
 
 - (void)touchDownAtPoint:(CGPoint)pos {
 //    SKShapeNode *n = [_spinnyNode copy];
@@ -149,9 +158,11 @@ static NSInteger const kVerticalBlockerGap = 300;
 }
 -(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
     /* Called when a touch begins */
-    _ball.physicsBody.velocity = CGVectorMake(0, 0);
-    [_ball.physicsBody applyImpulse:CGVectorMake(0, 175)];
-    //[_label runAction:[SKAction actionNamed:@"Pulse"] withKey:@"fadeInOut"];
+    if( _moving.speed > 0 ) {
+        _ball.physicsBody.velocity = CGVectorMake(0, 0);
+        [_ball.physicsBody applyImpulse:CGVectorMake(0, 175)];
+        [_label runAction:[SKAction actionNamed:@"Pulse"] withKey:@"fadeInOut"];
+    }
 
 //- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
 //    // Run 'Pulse' action from 'Actions.sks'
