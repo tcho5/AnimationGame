@@ -38,9 +38,10 @@ static const uint32_t scoreCategory = 1 << 3;
     _canRestart = NO;
     _score = 0;
     _scoreLabelNode = [SKLabelNode labelNodeWithFontNamed:@"MarkerFelt-Wide"];
-    _scoreLabelNode.position = CGPointMake( CGRectGetMidX( self.frame ), 3 * self.frame.size.height / 4 );
+    _scoreLabelNode.position = CGPointMake(self.frame.size.width / 10, CGRectGetMidY(self.frame));
+    //_scoreLabelNode.position = CGPointMake( CGRectGetMidX( self.frame ), 3 * self.frame.size.height / 4 );
     _scoreLabelNode.zPosition = 100;
-    _scoreLabelNode.text = [NSString stringWithFormat:@"%ld", _score];
+    _scoreLabelNode.text = [NSString stringWithFormat:@"Score: %ld", _score];
     [self addChild:_scoreLabelNode];
     
     
@@ -156,7 +157,7 @@ static const uint32_t scoreCategory = 1 << 3;
             // Ball has contact with score entity
             
             _score++;
-            _scoreLabelNode.text = [NSString stringWithFormat:@"%ld", _score];
+            _scoreLabelNode.text = [NSString stringWithFormat:@"Score: %ld", _score];
         } else {
             // Ball has been blocked
             _moving.speed = 0;
@@ -192,7 +193,6 @@ static const uint32_t scoreCategory = 1 << 3;
     if( _moving.speed > 0 ) {
         _ball.physicsBody.velocity = CGVectorMake(0, 0);
         [_ball.physicsBody applyImpulse:CGVectorMake(0, 175)];
-        [_label runAction:[SKAction actionNamed:@"Pulse"] withKey:@"fadeInOut"];
     }
     else if( _canRestart ) {
         [self resetScene];
@@ -251,7 +251,7 @@ CGFloat clamp(CGFloat min, CGFloat max, CGFloat value) {
     _moving.speed = 1;
     
     _score = 0;
-    _scoreLabelNode.text = [NSString stringWithFormat:@"%ld", _score];
+    _scoreLabelNode.text = [NSString stringWithFormat:@"Score: %ld", _score];
 
 }
 @end
