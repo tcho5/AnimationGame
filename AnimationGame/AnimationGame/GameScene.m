@@ -35,7 +35,7 @@ static const uint32_t scoreCategory = 1 << 3;
 
 
 - (void)didMoveToView:(SKView *)view {
-    self.backgroundColor = UIColor.blackColor;
+    self.backgroundColor = UIColor.whiteColor;
    // self.view.backgroundColor = [UIColor blackColor];
     // Setup your scene here
     bounceSound = [[SKAudioNode alloc] initWithFileNamed:@"BOUNCE.wav"];
@@ -52,14 +52,16 @@ static const uint32_t scoreCategory = 1 << 3;
     _canRestart = NO;
     _score = 0;
     _scoreLabelNode = [SKLabelNode labelNodeWithFontNamed:@"MarkerFelt-Wide"];
-    _scoreLabelNode.position = CGPointMake(self.frame.size.width/20, CGRectGetMidY(self.frame));
+    _scoreLabelNode.fontColor = UIColor.blackColor;
+    _scoreLabelNode.position = CGPointMake(self.frame.size.width/20 -100 , CGRectGetMidY(self.frame) + 300);
     _scoreLabelNode.zPosition = 100;
     _scoreLabelNode.text = [NSString stringWithFormat:@"Score: %ld", _score];
     [self addChild:_scoreLabelNode];
     
     _highScore = 0;
     _highScoreLabelNode = [SKLabelNode labelNodeWithFontNamed:@"MarkerFelt-Wide"];
-    _highScoreLabelNode.position = CGPointMake(self.frame.size.width/20, CGRectGetMidY(self.frame) - 30);
+    _highScoreLabelNode.fontColor = UIColor.blackColor;
+    _highScoreLabelNode.position = CGPointMake(self.frame.size.width/20 - 100, CGRectGetMidY(self.frame) + 250);
     _highScoreLabelNode.zPosition = 100;
     _highScoreLabelNode.text = [NSString stringWithFormat:@"High Score: %ld", _score];
     [self addChild:_highScoreLabelNode];
@@ -100,28 +102,11 @@ static const uint32_t scoreCategory = 1 << 3;
     dummy2.physicsBody.dynamic = NO;
     [self addChild:dummy2];
     
-//    SKTexture* groundTexture = [SKTexture textureWithImageNamed:@"IntroPicBasketball"];
-//    groundTexture.filteringMode = SKTextureFilteringNearest;
-//    SKAction* moveGroundSprite = [SKAction moveByX:-groundTexture.size.width*2 y:0 duration:0.02 * groundTexture.size.width*2];
-//    SKAction* resetGroundSprite = [SKAction moveByX:groundTexture.size.width*2 y:0 duration:0];
-//    SKAction* moveGroundSpritesForever = [SKAction repeatActionForever:[SKAction sequence:@[moveGroundSprite, resetGroundSprite]]];
-//
-//    for( int i = 0; i < 2 + self.frame.size.width / ( groundTexture.size.width * 2 ); ++i ) {
-//        SKSpriteNode* sprite = [SKSpriteNode spriteNodeWithTexture:groundTexture];
-//        [sprite setScale:2.0];
-//        sprite.position = CGPointMake(i * sprite.size.width, -400);
-//        [sprite runAction:moveGroundSpritesForever];
-//        [self addChild:sprite];
-//    }
-    
     SKAction* spawn = [SKAction performSelector:@selector(spawnBlockers) onTarget:self];
     SKAction* delay = [SKAction waitForDuration:3.0];
     SKAction* spawnThenDelay = [SKAction sequence:@[spawn, delay]];
     SKAction* spawnThenDelayForever = [SKAction repeatActionForever:spawnThenDelay];
     [self runAction:spawnThenDelayForever];
-    
-    
-    
     
 }
 -(void)spawnBlockers {
@@ -188,7 +173,7 @@ static const uint32_t scoreCategory = 1 << 3;
             _canRestart = YES;
             [blockSound runAction:[SKAction changeVolumeTo:10 duration:5.0]];
             [blockSound runAction:[SKAction play]];
-                    }
+        }
     }
 }
 
