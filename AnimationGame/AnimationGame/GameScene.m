@@ -17,20 +17,33 @@
     SKTexture* _blockerTexture2;
     SKAction* _moveAndRemoveBlocks;
     SKNode* _moving;
+    SKNode* _blocker;
+    BOOL _canRestart;
+    SKLabelNode* _scoreLabelNode;
+    NSInteger _score;
 
 }
 static NSInteger const kVerticalBlockerGap = 300;
 static const uint32_t ballCategory = 1 << 0;
 static const uint32_t worldCategory = 1 << 1;
 static const uint32_t blockerCategory = 1 << 2;
+static const uint32_t scoreCategory = 1 << 3;
+
 
 - (void)didMoveToView:(SKView *)view {
-    self.backgroundColor = UIColor.lightTextColor;
+    self.backgroundColor = UIColor.blackColor;
    // self.view.backgroundColor = [UIColor blackColor];
     // Setup your scene here
     
-    //_backgroundColor = [SKColor SK_ColorBLACK = SkColorSetARGB(0xFF, 0x00, 0x00, 0x00)];
-    //[self setBackgroundColor:_backgroundColor];
+    _canRestart = NO;
+    _score = 0;
+    _scoreLabelNode = [SKLabelNode labelNodeWithFontNamed:@"MarkerFelt-Wide"];
+    _scoreLabelNode.position = CGPointMake( CGRectGetMidX( self.frame ), 3 * self.frame.size.height / 4 );
+    _scoreLabelNode.zPosition = 100;
+    _scoreLabelNode.text = [NSString stringWithFormat:@"%ld", _score];
+    [self addChild:_scoreLabelNode];
+    
+    
     self.physicsWorld.gravity = CGVectorMake( 0.0, -5.0 );
     self.physicsWorld.contactDelegate = self;
     
@@ -49,6 +62,8 @@ static const uint32_t blockerCategory = 1 << 2;
     _ball.physicsBody.collisionBitMask = worldCategory | blockerCategory;
     _ball.physicsBody.contactTestBitMask = worldCategory | blockerCategory;
     _moving = [SKNode node];
+    _blocker = [SKNode node];
+    [_moving addChild:_blocker];
     [self addChild:_moving];
     [self addChild:_ball];
 
@@ -120,19 +135,35 @@ static const uint32_t blockerCategory = 1 << 2;
     blocker2.physicsBody.contactTestBitMask = ballCategory;
     [blockerPair addChild:blocker2];
     
+    SKNode* contactNode = [SKNode node];
+    contactNode.position = CGPointMake( blocker1.size.width + _ball.size.width / 2, CGRectGetMidY( self.frame ) );
+    contactNode.physicsBody = [SKPhysicsBody bodyWithRectangleOfSize:CGSizeMake( blocker2.size.width, self.frame.size.height )];
+    contactNode.physicsBody.dynamic = NO;
+    contactNode.physicsBody.categoryBitMask = scoreCategory;
+    contactNode.physicsBody.contactTestBitMask = ballCategory;
+    [blockerPair addChild:contactNode];
+    
     //Change speed of blocker
     SKAction* moveBlockers = [SKAction repeatActionForever:[SKAction moveByX:-4 y:0 duration:0.02]];
     
     [blockerPair runAction:moveBlockers];
-    [self addChild:blockerPair];
+    [_blocker addChild:blockerPair];
 
 }
 - (void)didBeginContact:(SKPhysicsContact *)contact {
-    if( _moving.speed > 0 ) {
-        _moving.speed = 0;
-        
-        // Flash background if contact is detected
-    
+    if(_moving.speed > 0){
+        if( ( contact.bodyA.categoryBitMask & scoreCategory ) == scoreCategory || ( contact.bodyB.categoryBitMask & scoreCategory ) == scoreCategory ) {
+            // Ball has contact with score entity
+            
+            _score++;
+            _scoreLabelNode.text = [NSString stringWithFormat:@"%ld", _score];
+        } else {
+            // Ball has been blocked
+            _moving.speed = 0;
+            _canRestart = YES;
+            
+            //...
+        }
     }
 }
 
@@ -163,6 +194,9 @@ static const uint32_t blockerCategory = 1 << 2;
         [_ball.physicsBody applyImpulse:CGVectorMake(0, 175)];
         [_label runAction:[SKAction actionNamed:@"Pulse"] withKey:@"fadeInOut"];
     }
+    else if( _canRestart ) {
+        [self resetScene];
+    }
 
 //- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
 //    // Run 'Pulse' action from 'Actions.sks'
@@ -171,6 +205,7 @@ static const uint32_t blockerCategory = 1 << 2;
 //    //for (UITouch *t in touches) {[self touchDownAtPoint:[t locationInNode:self]];}
 //}
 }
+
 - (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event{
     for (UITouch *t in touches) {[self touchMovedToPoint:[t locationInNode:self]];}
 }
@@ -191,9 +226,32 @@ CGFloat clamp(CGFloat min, CGFloat max, CGFloat value) {
     }
 }
 -(void)update:(CFTimeInterval)currentTime {
-    _ball.zRotation = clamp( -1, 1, _ball.physicsBody.velocity.dy * ( _ball.physicsBody.velocity.dy < 0 ? 0.003 : 0.001 ) );
+    if( _moving.speed > 0 ) {
+        _ball.zRotation = clamp( -1, 0.5, _ball.physicsBody.velocity.dy * ( _ball.physicsBody.velocity.dy < 0 ? 0.003 : 0.001 ) );
+    }
 
     // Called before each frame is rendered
 }
 
+-(void)resetScene {
+    // Move bird to original position and reset velocity
+    _ball.position = CGPointMake(self.frame.size.width / 20, CGRectGetMidY(self.frame));
+    _ball.physicsBody.velocity = CGVectorMake( 0, 0 );
+    _ball.physicsBody.collisionBitMask = worldCategory | blockerCategory;
+    _ball.speed = 1.0;
+    _ball.zRotation = 0.0;
+    
+    // Remove all existing pipes
+    [_blocker removeAllChildren];
+    
+    // Reset _canRestart
+    _canRestart = NO;
+    
+    // Restart animation
+    _moving.speed = 1;
+    
+    _score = 0;
+    _scoreLabelNode.text = [NSString stringWithFormat:@"%ld", _score];
+
+}
 @end
