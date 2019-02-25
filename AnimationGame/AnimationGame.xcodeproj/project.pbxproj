@@ -23,6 +23,9 @@
 		BC324FA4221B5FED008E78C0 /* GiannisBlock 2.png in Resources */ = {isa = PBXBuildFile; fileRef = BC324FA3221B5FED008E78C0 /* GiannisBlock 2.png */; };
 		BC324FA6221B609C008E78C0 /* giannis3.png in Resources */ = {isa = PBXBuildFile; fileRef = BC324FA5221B609C008E78C0 /* giannis3.png */; };
 		BC324FAA221E027C008E78C0 /* intense_background.jpg in Resources */ = {isa = PBXBuildFile; fileRef = BC324FA9221E027C008E78C0 /* intense_background.jpg */; };
+		BCAA91DB22245A3C007D308E /* BOUNCE.wav in Resources */ = {isa = PBXBuildFile; fileRef = BCAA91DA22245A3B007D308E /* BOUNCE.wav */; };
+		BCAA91DD22246063007D308E /* crowd.wav in Resources */ = {isa = PBXBuildFile; fileRef = BCAA91DC22246063007D308E /* crowd.wav */; };
+		BCAA91DF222461B9007D308E /* BlockSound.wav in Resources */ = {isa = PBXBuildFile; fileRef = BCAA91DE222461B9007D308E /* BlockSound.wav */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -47,6 +50,9 @@
 		BC324FA3221B5FED008E78C0 /* GiannisBlock 2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "GiannisBlock 2.png"; sourceTree = "<group>"; };
 		BC324FA5221B609C008E78C0 /* giannis3.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = giannis3.png; sourceTree = "<group>"; };
 		BC324FA9221E027C008E78C0 /* intense_background.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = intense_background.jpg; sourceTree = "<group>"; };
+		BCAA91DA22245A3B007D308E /* BOUNCE.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = BOUNCE.wav; sourceTree = "<group>"; };
+		BCAA91DC22246063007D308E /* crowd.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = crowd.wav; sourceTree = "<group>"; };
+		BCAA91DE222461B9007D308E /* BlockSound.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = BlockSound.wav; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -79,6 +85,9 @@
 		BC27689D22170F7900F5C40C /* AnimationGame */ = {
 			isa = PBXGroup;
 			children = (
+				BCAA91DE222461B9007D308E /* BlockSound.wav */,
+				BCAA91DC22246063007D308E /* crowd.wav */,
+				BCAA91DA22245A3B007D308E /* BOUNCE.wav */,
 				BC324FA9221E027C008E78C0 /* intense_background.jpg */,
 				BC324FA5221B609C008E78C0 /* giannis3.png */,
 				BC324FA3221B5FED008E78C0 /* GiannisBlock 2.png */,
@@ -166,11 +175,14 @@
 				BC2768AF22170F7C00F5C40C /* Assets.xcassets in Resources */,
 				BC324FA2221B5F11008E78C0 /* GiannisBlock.png in Resources */,
 				BC2768B222170F7C00F5C40C /* LaunchScreen.storyboard in Resources */,
+				BCAA91DF222461B9007D308E /* BlockSound.wav in Resources */,
 				BC324FAA221E027C008E78C0 /* intense_background.jpg in Resources */,
+				BCAA91DB22245A3C007D308E /* BOUNCE.wav in Resources */,
 				BC324F9E221B060E008E78C0 /* Screen Shot 2019-02-18 at 10.25.46 AM.png in Resources */,
 				BC324FA0221B0805008E78C0 /* basketball1.png in Resources */,
 				BC2768A422170F7900F5C40C /* Actions.sks in Resources */,
 				BC324F9A221B04AD008E78C0 /* IntroPicBasketball.jpeg in Resources */,
+				BCAA91DD22246063007D308E /* crowd.wav in Resources */,
 				BC324FA6221B609C008E78C0 /* giannis3.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

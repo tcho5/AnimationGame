@@ -7,7 +7,6 @@
 //
 
 #import "GameScene.h"
-
 @implementation GameScene {
     SKShapeNode *_spinnyNode;
     SKLabelNode *_label;
@@ -21,6 +20,11 @@
     BOOL _canRestart;
     SKLabelNode* _scoreLabelNode;
     NSInteger _score;
+    SKLabelNode* _highScoreLabelNode;
+    NSInteger _highScore;
+    SKAudioNode* bounceSound;
+    SKAudioNode* blockSound;
+    SKAudioNode* crowdSound;
 
 }
 static NSInteger const kVerticalBlockerGap = 300;
@@ -34,20 +38,35 @@ static const uint32_t scoreCategory = 1 << 3;
     self.backgroundColor = UIColor.blackColor;
    // self.view.backgroundColor = [UIColor blackColor];
     // Setup your scene here
+    bounceSound = [[SKAudioNode alloc] initWithFileNamed:@"BOUNCE.wav"];
+    bounceSound.autoplayLooped = false;
+    [self addChild:bounceSound];
+    blockSound = [[SKAudioNode alloc] initWithFileNamed:@"BlockSound.wav"];
+    blockSound.autoplayLooped = false;
+    [self addChild:blockSound];
+    crowdSound = [[SKAudioNode alloc] initWithFileNamed:@"crowd.wav"];
+    crowdSound.autoplayLooped = true;
+    [self addChild:crowdSound];
+    
     
     _canRestart = NO;
     _score = 0;
     _scoreLabelNode = [SKLabelNode labelNodeWithFontNamed:@"MarkerFelt-Wide"];
-    _scoreLabelNode.position = CGPointMake(self.frame.size.width / 10, CGRectGetMidY(self.frame));
-    //_scoreLabelNode.position = CGPointMake( CGRectGetMidX( self.frame ), 3 * self.frame.size.height / 4 );
+    _scoreLabelNode.position = CGPointMake(self.frame.size.width/20, CGRectGetMidY(self.frame));
     _scoreLabelNode.zPosition = 100;
     _scoreLabelNode.text = [NSString stringWithFormat:@"Score: %ld", _score];
     [self addChild:_scoreLabelNode];
     
+    _highScore = 0;
+    _highScoreLabelNode = [SKLabelNode labelNodeWithFontNamed:@"MarkerFelt-Wide"];
+    _highScoreLabelNode.position = CGPointMake(self.frame.size.width/20, CGRectGetMidY(self.frame) - 30);
+    _highScoreLabelNode.zPosition = 100;
+    _highScoreLabelNode.text = [NSString stringWithFormat:@"High Score: %ld", _score];
+    [self addChild:_highScoreLabelNode];
+    
     
     self.physicsWorld.gravity = CGVectorMake( 0.0, -5.0 );
     self.physicsWorld.contactDelegate = self;
-    
     
     
     SKTexture* ballTexture = [SKTexture textureWithImageNamed:@"basketball1"];
@@ -158,13 +177,18 @@ static const uint32_t scoreCategory = 1 << 3;
             
             _score++;
             _scoreLabelNode.text = [NSString stringWithFormat:@"Score: %ld", _score];
+            if(_score > _highScore){
+                _highScore = _score;
+                _highScoreLabelNode.text = [NSString stringWithFormat:@"High Score: %ld", _score];
+            }
+            //_highScoreLabelNode.text = [NSString stringWithFormat:@"Score: %ld", _score];
         } else {
             // Ball has been blocked
             _moving.speed = 0;
             _canRestart = YES;
-            
-            //...
-        }
+            [blockSound runAction:[SKAction changeVolumeTo:10 duration:5.0]];
+            [blockSound runAction:[SKAction play]];
+                    }
     }
 }
 
@@ -193,6 +217,7 @@ static const uint32_t scoreCategory = 1 << 3;
     if( _moving.speed > 0 ) {
         _ball.physicsBody.velocity = CGVectorMake(0, 0);
         [_ball.physicsBody applyImpulse:CGVectorMake(0, 175)];
+        [bounceSound runAction:[SKAction play]];
     }
     else if( _canRestart ) {
         [self resetScene];
